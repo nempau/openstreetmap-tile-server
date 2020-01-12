@@ -1,3 +1,27 @@
+# Modifications for the needs of Serbia
+
+This version has been slightly modified for rendering purposes of Serbia
+Date: 12.01.2019
+
+## What has changed?
+
+The following has been added to Dockerfile:
+
+### Configure stylesheet
+```
+RUN mkdir -p /home/renderer/src \
+ && cd /home/renderer/src \
+ && git clone https://github.com/gravitystorm/openstreetmap-carto.git \
+ && git -C openstreetmap-carto checkout v4.23.0 \
+ && cd openstreetmap-carto \
+ && sed -i "35i node,way   name:sr      text         linear \nnode,way   name:sr-Latn text       linear" openstreetmap-carto.style\
+ && rm -rf .git \
+ && npm install -g carto@0.18.2 \
+ && carto project.mml > mapnik.xml \
+```
+
+
+
 # openstreetmap-tile-server
 
 [![Build Status](https://travis-ci.org/Overv/openstreetmap-tile-server.svg?branch=master)](https://travis-ci.org/Overv/openstreetmap-tile-server) [![](https://images.microbadger.com/badges/image/overv/openstreetmap-tile-server.svg)](https://microbadger.com/images/overv/openstreetmap-tile-server "openstreetmap-tile-server")
