@@ -134,7 +134,7 @@ if [ "$1" = "import" ]; then
     sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET tags = '\"capital\"=>\"no\"'where name = 'Приштина';"
     
     # Kosovo -> Kosovo i Metohija
-    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET name = 'Косво и Метхохија' where name='Косово';"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET name = '' where name='Косово';"
     sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET name = '' where name='Косово';"
     
     # Create indexes
