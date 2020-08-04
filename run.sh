@@ -42,7 +42,7 @@ if [ "$1" = "import" ]; then
     sudo -u postgres psql -d gis -c "ALTER TABLE geometry_columns OWNER TO renderer;"
     sudo -u postgres psql -d gis -c "ALTER TABLE spatial_ref_sys OWNER TO renderer;"
     # GRANT SELECT, UPDATE, INSERT, DELETE for osmsrbija
-    sudo -u postgres psql -d gis -c "sudo -u postgres CREATE USER osmsrbija WITH PASSWORD 'osmsrbija';"
+    sudo -u postgres psql -d gis -c "CREATE USER osmsrbija WITH PASSWORD 'osmsrbija';"
     sudo -u postgres psql -d gis -c "GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO osmsrbija;"
     sudo -u postgres psql -d gis -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO osmsrbija;"
     setPostgresPassword
