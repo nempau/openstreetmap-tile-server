@@ -62,6 +62,19 @@ docker run \
 
 Refer to the section *Automatic updating and tile expiry* to actually enable the updates while running the tile server.
 
+### Letting the container download the file
+
+It is also possible to let the container download files for you rather than mounting them in advance by using the `DOWNLOAD_PBF` and `DOWNLOAD_POLY` parameters:
+
+```
+docker run \
+    -e DOWNLOAD_PBF=https://download.geofabrik.de/europe/luxembourg-latest.osm.pbf \
+    -e DOWNLOAD_POLY=https://download.geofabrik.de/europe/luxembourg.poly \
+    -v openstreetmap-data:/var/lib/postgresql/12/main \
+    overv/openstreetmap-tile-server \
+    import
+```
+
 ## Running the server
 
 Run the server like this:
@@ -114,13 +127,13 @@ This will enable a background process that automatically downloads changes from 
 
 ### Cross-origin resource sharing
 
-To enable the `Access-Control-Allow-Origin` header to be able to retrieve tiles from other domains, simply set the `ALLOW_CORS` variable to `1`:
+To enable the `Access-Control-Allow-Origin` header to be able to retrieve tiles from other domains, simply set the `ALLOW_CORS` variable to `enabled`:
 
 ```
 docker run \
     -p 8080:80 \
     -v openstreetmap-data:/var/lib/postgresql/12/main \
-    -e ALLOW_CORS=1 \
+    -e ALLOW_CORS=enabled \
     -d overv/openstreetmap-tile-server \
     run
 ```
@@ -249,7 +262,7 @@ Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
 You may obtain a copy of the License at
 
-    http://www.apache.org/licenses/LICENSE-2.0
+    https://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software
 distributed under the License is distributed on an "AS IS" BASIS,

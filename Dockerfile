@@ -11,12 +11,14 @@ RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 # Install dependencies
 RUN apt-get update \
-  && apt-get install wget gnupg2 lsb-core -y \
+  && apt-get install -y wget gnupg2 lsb-core apt-transport-https ca-certificates curl \
   && wget --quiet -O - https://www.postgresql.org/media/keys/ACCC4CF8.asc | apt-key add - \
-  && echo "deb [ trusted=yes ] http://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list \
+  && echo "deb [ trusted=yes ] https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list \
+  && wget --quiet -O - https://deb.nodesource.com/setup_10.x | bash - \
   && apt-get update \
-  && apt-get install -y apt-transport-https ca-certificates \
-  && apt-get install -y --no-install-recommends --allow-unauthenticated \
+  && apt-get install -y nodejs
+
+RUN apt-get install -y --no-install-recommends \
   apache2 \
   apache2-dev \
   autoconf \
@@ -54,8 +56,7 @@ RUN apt-get update \
   lua5.3 \
   make \
   mapnik-utils \
-  nodejs \
-  npm \
+  node-gyp \
   osmium-tool \
   osmosis \
   postgis \
@@ -78,12 +79,14 @@ RUN apt-get update \
 && rm -rf /var/lib/{apt,dpkg,cache,log}/
 
 # Set up PostGIS
-RUN wget http://download.osgeo.org/postgis/source/postgis-3.0.0.tar.gz -O postgis.tar.gz \
+RUN wget https://download.osgeo.org/postgis/source/postgis-3.0.0.tar.gz -O postgis.tar.gz \
  && mkdir -p postgis_src \
  && tar -xvzf postgis.tar.gz --strip 1 -C postgis_src \
  && rm postgis.tar.gz \
  && cd postgis_src \
- && ./configure && make && make install \
+ && ./configure \
+ && make -j $(nproc) \
+ && make -j $(nproc) install \
  && cd .. && rm -rf postgis_src
 
 # Set up renderer user
@@ -92,14 +95,14 @@ RUN adduser --disabled-password --gecos "" renderer
 # Install latest osm2pgsql
 RUN mkdir -p /home/renderer/src \
  && cd /home/renderer/src \
- && git clone https://github.com/openstreetmap/osm2pgsql.git \
+ && git clone -b master https://github.com/openstreetmap/osm2pgsql.git --depth 1 \
  && cd /home/renderer/src/osm2pgsql \
  && rm -rf .git \
  && mkdir build \
  && cd build \
  && cmake .. \
  && make -j $(nproc) \
- && make install \
+ && make -j $(nproc) install \
  && mkdir /nodes \
  && chown renderer:renderer /nodes \
  && rm -rf /home/renderer/src/osm2pgsql
@@ -107,8 +110,9 @@ RUN mkdir -p /home/renderer/src \
 # Install mod_tile and renderd
 RUN mkdir -p /home/renderer/src \
  && cd /home/renderer/src \
- && git clone -b switch2osm https://github.com/SomeoneElseOSM/mod_tile.git \
+ && git clone -b switch2osm https://github.com/SomeoneElseOSM/mod_tile.git --depth 1 \
  && cd mod_tile \
+ && rm -rf .git \
  && ./autogen.sh \
  && ./configure \
  && make -j $(nproc) \
@@ -120,17 +124,18 @@ RUN mkdir -p /home/renderer/src \
 # Configure stylesheet
 RUN mkdir -p /home/renderer/src \
  && cd /home/renderer/src \
- && git clone https://github.com/gravitystorm/openstreetmap-carto.git \
- && git -C openstreetmap-carto checkout v4.23.0 \
+ && git clone --single-branch --branch v4.23.0 https://github.com/gravitystorm/openstreetmap-carto.git --depth 1 \
  && cd openstreetmap-carto \
  && sed -i "35i node,way   name:sr      text         linear \nnode,way   name:sr-Latn text       linear" openstreetmap-carto.style\
  && rm -rf .git \
  && npm install -g carto@0.18.2 \
  && carto project.mml > mapnik.xml \
- && scripts/get-shapefiles.py
+ && scripts/get-shapefiles.py \
+ && rm /home/renderer/src/openstreetmap-carto/data/*.zip
 
 # Configure renderd
 RUN sed -i 's/renderaccount/renderer/g' /usr/local/etc/renderd.conf \
+ && sed -i 's/\/truetype//g' /usr/local/etc/renderd.conf \
  && sed -i 's/hot/tile/g' /usr/local/etc/renderd.conf
 
 # Configure Apache
