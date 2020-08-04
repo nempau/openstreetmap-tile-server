@@ -16,7 +16,8 @@ RUN apt-get update \
   && echo "deb [ trusted=yes ] https://apt.postgresql.org/pub/repos/apt/ `lsb_release -cs`-pgdg main" | tee /etc/apt/sources.list.d/pgdg.list \
   && wget --quiet -O - https://deb.nodesource.com/setup_10.x | bash - \
   && apt-get update \
-  && apt-get install -y nodejs
+  && apt-get install -y nodejs\
+  && apt-get install osmctools
 
 RUN apt-get install -y --no-install-recommends \
   apache2 \
