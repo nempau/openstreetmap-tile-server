@@ -97,9 +97,45 @@ if [ "$1" = "import" ]; then
     # Import data
     sudo -u renderer osm2pgsql -d gis --create --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS}
 
-    #Grant editing to osmsrbija
+    # Grant editing to osmsrbija
     sudo -u postgres psql -d gis -c "GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO osmsrbija;"
     sudo -u postgres psql -d gis -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO osmsrbija;"
+    
+    # Data customization
+    # Delete from public.planet_osm_line
+    sudo -u postgres psql -d gis -c "delete from public.planet_osm_line where admin_level = '2';"
+    sudo -u postgres psql -d gis -c "delete from public.planet_osm_line where admin_level = '3';"
+    sudo -u postgres psql -d gis -c "delete from public.planet_osm_line where admin_level = '4' and boundary = 'administrative';"
+    
+    # Delete fromplanet_osm_roads
+    sudo -u postgres psql -d gis -c "delete from public.planet_osm_roads where admin_level = '2' and boundary = 'administrative';"
+    sudo -u postgres psql -d gis -c "delete from public.planet_osm_roads where admin_level = '3' and boundary = 'administrative';"
+
+    #import from serbian_borders.csv
+    sudo -u postgres psql -d gis -c "COPY public.planet_osm_line FROM '/serbian_border.csv' DELIMITER ',' CSV HEADER;
+    sudo -u postgres psql -d gis -c "COPY public.planet_osm_roads FROM '/serbian_border.csv' DELIMITER ',' CSV HEADER;
+
+    #Language
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_line SET name = \"name:sr\" where \"name:sr\" is not null;"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_line SET name = \"name:sr-Latn\" where \"name:sr\" is null;"
+
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET name = \"name:sr\" where \"name:sr\" is not null;"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET name = \"name:sr-Latn\" where \"name:sr\" is null;"
+
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_roads SET name = \"name:sr\" where \"name:sr\" is not null;"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_roads SET name = \"name:sr-Latn\" where \"name:sr\" is null;"
+
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET name = \"name:sr\" where \"name:sr\" is not null;"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET name = \"name:sr-Latn\" where \"name:sr\" is null;"
+    
+    #Pristina
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET admin_level = null where name = 'Приштина';"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET tags = '\"ele\"=>\"72\", \"is_in\"=>\"Serbia\", \"capital\"=>\"4\", \"wikidata\"=>\"Q25270\", \"population\"=>\"204721\"'where name = 'Приштина';"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET tags = '\"capital\"=>\"no\"'where name = 'Приштина';"
+    
+    # Kosovo -> Kosovo i Metohija
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_polygon SET name = 'Косво и Метхохија' where name='Косово';"
+    sudo -u postgres psql -d gis -c "UPDATE planet_osm_point SET name = 'Косво и Метхохија' where name='Косово';"
     
     # Create indexes
     sudo -u postgres psql -d gis -f indexes.sql
