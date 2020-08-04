@@ -44,20 +44,40 @@ if [ "$1" = "import" ]; then
     setPostgresPassword
 
     # Download Luxembourg as sample if no data is provided
-    if [ ! -f /data.osm.pbf ] && [ -z "$DOWNLOAD_PBF" ]; then
-        echo "WARNING: No import file at /data.osm.pbf, so importing Luxembourg as example..."
-        DOWNLOAD_PBF="https://download.geofabrik.de/europe/luxembourg-latest.osm.pbf"
-        DOWNLOAD_POLY="https://download.geofabrik.de/europe/luxembourg.poly"
-    fi
-
-    if [ -n "$DOWNLOAD_PBF" ]; then
-        echo "INFO: Download PBF file: $DOWNLOAD_PBF"
-        wget -nv "$DOWNLOAD_PBF" -O /data.osm.pbf
-        if [ -n "$DOWNLOAD_POLY" ]; then
-            echo "INFO: Download PBF-POLY file: $DOWNLOAD_POLY"
-            wget -nv "$DOWNLOAD_POLY" -O /data.poly
-        fi
-    fi
+    #if [ ! -f /data.osm.pbf ] && [ -z "$DOWNLOAD_PBF" ]; then
+    #    echo "WARNING: No import file at /data.osm.pbf, so importing Luxembourg as example..."
+    #    DOWNLOAD_PBF="https://download.geofabrik.de/europe/luxembourg-latest.osm.pbf"
+    #    DOWNLOAD_POLY="https://download.geofabrik.de/europe/luxembourg.poly"
+        
+     #fi
+     
+     if [ ! -f /data.osm.pbf ]; then
+        #Serbia
+        cd /
+        #Preuzimanje podataka
+        echo "INFO: Downloading PBF files of Serbia and Kosovo and Metohija":
+        sudo wget --backups=1 https://download.geofabrik.de/europe/serbia-latest.osm.pbf 
+        sudo wget --backups=1 https://download.geofabrik.de/europe/kosovo-latest.osm.pbf
+        #Konverzija i spajanje podataka 
+        echo "INFO: Merging PBF files of Serbia and Kosovo and Metohija":
+        sudo osmconvert kosovo-latest.osm.pbf -o=kosovo-latest.o5m
+        sudo osmconvert serbia-latest.osm.pbf -o=s 
+        sudo osmconvert kosovo-latest.o5m serbia-latest.o5m -o=srbija.o5m
+        echo "INFO: Creating joint data.osm.pbf":
+        sudo osmconvert srbija.o5m  -o="data.osm.pbf"
+        sudo chmod 755 "data.osm.pbf"
+        echo "INFO: File data.osm.pbf is ready for import":
+        sudo rm serbia-latest.osm.pbf  kosovo-latest.osm.pbf  kosovo-latest.o5m serbia-latest.o5m srbija.o5m
+     fi
+     
+    #if [ -n "$DOWNLOAD_PBF" ]; then
+     #   echo "INFO: Download PBF file: $DOWNLOAD_PBF"
+     #   wget -nv "$DOWNLOAD_PBF" -O /data.osm.pbf
+     #   if [ -n "$DOWNLOAD_POLY" ]; then
+     #       echo "INFO: Download PBF-POLY file: $DOWNLOAD_POLY"
+     #       wget -nv "$DOWNLOAD_POLY" -O /data.poly
+     #   fi
+    #fi
 
     if [ "$UPDATES" = "enabled" ]; then
         # determine and set osmosis_replication_timestamp (for consecutive updates)
