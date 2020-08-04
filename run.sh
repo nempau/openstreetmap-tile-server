@@ -34,8 +34,6 @@ if [ "$1" = "import" ]; then
     createPostgresConfig
     service postgresql start
     sudo -u postgres createuser renderer
-    
-    
     sudo -u postgres createdb -E UTF8 -O renderer gis
     sudo -u postgres psql -d gis -c "CREATE EXTENSION postgis;"
     sudo -u postgres psql -d gis -c "CREATE EXTENSION hstore;"
@@ -43,8 +41,6 @@ if [ "$1" = "import" ]; then
     sudo -u postgres psql -d gis -c "ALTER TABLE spatial_ref_sys OWNER TO renderer;"
     # Create new editor user "osmsrbija"
     sudo -u postgres psql -d gis -c "CREATE USER osmsrbija WITH PASSWORD 'osmsrbija';"
-    sudo -u postgres psql -d gis -c "GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO osmsrbija;"
-    sudo -u postgres psql -d gis -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO osmsrbija;"
     setPostgresPassword
 
     # Download Luxembourg as sample if no data is provided
@@ -81,6 +77,10 @@ if [ "$1" = "import" ]; then
     # Import data
     sudo -u renderer osm2pgsql -d gis --create --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS}
 
+    #Grant editing to osmsrbija
+    sudo -u postgres psql -d gis -c "GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO osmsrbija;"
+    sudo -u postgres psql -d gis -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO osmsrbija;"
+    
     # Create indexes
     sudo -u postgres psql -d gis -f indexes.sql
 
