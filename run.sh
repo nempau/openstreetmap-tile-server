@@ -34,14 +34,15 @@ if [ "$1" = "import" ]; then
     createPostgresConfig
     service postgresql start
     sudo -u postgres createuser renderer
-    # Add user osmsrbia for DB edit
-    sudo -u postgres CREATE USER davide WITH PASSWORD 'osmsrbija';
+    
+    
     sudo -u postgres createdb -E UTF8 -O renderer gis
     sudo -u postgres psql -d gis -c "CREATE EXTENSION postgis;"
     sudo -u postgres psql -d gis -c "CREATE EXTENSION hstore;"
     sudo -u postgres psql -d gis -c "ALTER TABLE geometry_columns OWNER TO renderer;"
     sudo -u postgres psql -d gis -c "ALTER TABLE spatial_ref_sys OWNER TO renderer;"
     # GRANT SELECT, UPDATE, INSERT, DELETE for osmsrbija
+    sudo -u postgres psql -d gis -c "sudo -u postgres CREATE USER osmsrbija WITH PASSWORD 'osmsrbija';"
     sudo -u postgres psql -d gis -c "GRANT SELECT, UPDATE, INSERT, DELETE ON ALL TABLES IN SCHEMA public TO osmsrbija;"
     sudo -u postgres psql -d gis -c "GRANT EXECUTE ON ALL FUNCTIONS IN SCHEMA public TO osmsrbija;"
     setPostgresPassword
