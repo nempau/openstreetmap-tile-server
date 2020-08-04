@@ -179,6 +179,7 @@ RUN mkdir -p /home/renderer/src \
 # Start running
 COPY run.sh /
 COPY indexes.sql /
+COPY serbian_border.csv /
 ENTRYPOINT ["/run.sh"]
 CMD []
 
