@@ -113,7 +113,7 @@ if [ "$1" = "import" ]; then
 
     #import from serbian_borders.csv
     sudo -u postgres psql -d gis -c "COPY public.planet_osm_line FROM '/serbian_border.csv' DELIMITER ',' CSV HEADER;"
-    sudo -u postgres psql -d gis -c "COPY public.planet_osm_roads FROM '/serbian_border.csv' DELIMITER ',' CSV HEADER";"
+    sudo -u postgres psql -d gis -c "COPY public.planet_osm_roads FROM '/serbian_border.csv' DELIMITER ',' CSV HEADER;"
 
     #Language
     sudo -u postgres psql -d gis -c "UPDATE planet_osm_line SET name = \"name:sr\" where \"name:sr\" is not null;"
