@@ -61,7 +61,7 @@ if [ "$1" = "import" ]; then
         #Konverzija i spajanje podataka 
         echo "INFO: Merging PBF files of Serbia and Kosovo and Metohija":
         sudo osmconvert kosovo-latest.osm.pbf -o=kosovo-latest.o5m
-        sudo osmconvert serbia-latest.osm.pbf -o=s 
+        sudo osmconvert serbia-latest.osm.pbf -o=serbia-latest.o5m 
         sudo osmconvert kosovo-latest.o5m serbia-latest.o5m -o=srbija.o5m
         echo "INFO: Creating joint data.osm.pbf":
         sudo osmconvert srbija.o5m  -o="data.osm.pbf"
