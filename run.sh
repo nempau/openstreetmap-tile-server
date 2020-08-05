@@ -94,7 +94,7 @@ if [ "$1" = "import" ]; then
         sudo -u renderer cp /data.poly /var/lib/mod_tile/data.poly
     fi
 
-    # Import data
+    # Import data of Serbia
     sudo -u renderer osm2pgsql -d gis --create --slim -G --hstore --tag-transform-script /home/renderer/src/openstreetmap-carto/openstreetmap-carto.lua --number-processes ${THREADS:-4} -S /home/renderer/src/openstreetmap-carto/openstreetmap-carto.style /data.osm.pbf ${OSM2PGSQL_EXTRA_ARGS}
 
     # Grant editing to osmsrbija
