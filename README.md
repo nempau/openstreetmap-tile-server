@@ -1,7 +1,7 @@
 # Modifications for the needs of Serbia
 
 This version has been slightly modified for rendering purposes of Serbia
-Date: 05.08.2019
+Date: 05.08.2020.
 
 ## How to run?
 ```
@@ -22,6 +22,9 @@ sudo docker run -p 8001:80 -p 5433:5432 -v osm-postgres:/var/lib/postgresql/12/m
 
 ### Running Demo:
 http://localhost:8001
+
+### TMS Service:
+http://localhost:8001/tiles/{z}/{x}/{y}.png
 
 ______________________________
 
