@@ -182,6 +182,7 @@ COPY run.sh /
 COPY indexes.sql /
 COPY serbian_border.csv /
 COPY /ne_110m_admin_0_boundary_lines_land /home/renderer/src/openstreetmap-carto/data/ne_110m_admin_0_boundary_lines_land
+COPY render_list_geo.pl /home/renderer/src/mod_tile/
 ENTRYPOINT ["/run.sh"]
 CMD []
 
