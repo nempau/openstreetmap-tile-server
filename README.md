@@ -33,7 +33,7 @@ Source Code https://github.com/alx77/render_list_geo.pl
 ```
 docker exec -it osm-serbia_un1244 bash
 cd /home/renderer/src/mod_tile/
-perl ./render_list_geo.pl -m ajt -s /var/run/renderd/renderd.sock -t /var/lib/mod_tile/ajt -n 10 -z 0-Z 18 -x 18.8 -X 23.1 -y 41.8 -Y 46.2
+perl ./render_list_geo.pl -m ajt -s /var/run/renderd/renderd.sock -n 10 -z 0 -Z 12 -x 18.8 -X 23.1 -y 41.8 -Y 46.2
 ```
 #### Cache size per Zoom level:
 28K     0  
