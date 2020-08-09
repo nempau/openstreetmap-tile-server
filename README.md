@@ -26,6 +26,35 @@ http://localhost:8001
 ### TMS Service:
 http://localhost:8001/tiles/{z}/{x}/{y}.png
 
+### Perl script for prerender raster tiles:
+Source Code https://github.com/alx77/render_list_geo.pl
+
+#### Call for Serbian BBOX:
+```
+docker exec -it osm-serbia_un1244 bash
+cd /home/renderer/src/mod_tile/
+perl ./render_list_geo.pl -m ajt -s /var/run/renderd/renderd.sock -t /var/lib/mod_tile/ajt -n 10 -z 0-Z 18 -x 18.8 -X 23.1 -y 41.8 -Y 46.2
+```
+#### Cache size per Zoom level:
+28K     0  
+44K     1  
+80K     2  
+168K    3  
+324K    4  
+388K    5  
+304K    6  
+284K    7  
+508K    8  
+1.2M    9  
+2.8M    10  
+7.3M    11  
+25M     12    
+83M     13  
+219M    14  
+599M    15  
+1.6G    16  
+4.2G    17  
+13G     18  
 ______________________________
 
 # openstreetmap-tile-server
