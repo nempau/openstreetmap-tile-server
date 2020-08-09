@@ -16,7 +16,7 @@ docker create volume osm-postgres
 #Import data
 sudo time docker run  -v osm-postgres:/var/lib/postgresql/12/main osm-srbija-un1244 import
 
-#Docker rum
+#Docker run
 sudo docker run -p 8001:80 -p 5433:5432 -v osm-postgres:/var/lib/postgresql/12/main --name osm-serbia_un1244 -d osm-srbija-un1244 run 
 ```
 
