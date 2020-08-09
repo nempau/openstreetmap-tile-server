@@ -176,13 +176,14 @@ RUN mkdir -p /home/renderer/src \
  && rm -rf .git \
  && chmod u+x /home/renderer/src/regional/trim_osc.py
 
+COPY render_list_geo.pl /home/renderer/src/mod_tile/
+RUN  chmod 775 /home/renderer/src/mod_tile/render_list_geo.pl
 
 # Start running
 COPY run.sh /
 COPY indexes.sql /
 COPY serbian_border.csv /
 COPY /ne_110m_admin_0_boundary_lines_land /home/renderer/src/openstreetmap-carto/data/ne_110m_admin_0_boundary_lines_land
-COPY render_list_geo.pl /home/renderer/src/mod_tile/
 ENTRYPOINT ["/run.sh"]
 CMD []
 
