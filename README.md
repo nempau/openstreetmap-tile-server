@@ -8,7 +8,7 @@ Date: 05.08.2020.
 cd your/path
 git clone https://github.com/nempau/openstreetmap-tile-server.git
 
-docker buid -t osm-srbija-un1244 .
+docker build -t osm-srbija-un1244 .
 
 #Create Docker volume for postgresql data
 docker create volume osm-postgres
@@ -17,7 +17,7 @@ docker create volume osm-postgres
 sudo time docker run  -v osm-postgres:/var/lib/postgresql/12/main osm-srbija-un1244 import
 
 #Docker run
-sudo docker run -p 8001:80 -p 5433:5432 -v osm-postgres:/var/lib/postgresql/12/main --name osm-serbia_un1244 -d osm-srbija-un1244 run 
+sudo docker run -p 8001:80 -p 5433:5432 -v osm-postgres:/var/lib/postgresql/12/main --name osm-srbija-un1244 -d osm-srbija-un1244
 ```
 
 ### Running Demo:
